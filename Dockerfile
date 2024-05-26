@@ -1,21 +1,12 @@
-# Python Based Docker
-FROM python:latest
+FROM python:3.10.6
+RUN mkdir /bot && chmod 777 /bot
+WORKDIR /bot
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt -qq update && \
+    apt -qq install -y git wget pv jq python3-dev ffmpeg mediainfo neofetch && \
+    apt-get install wget -y -f && \
+    apt-get install fontconfig -y -f
 
-# Installing Packages
-RUN apt update && apt upgrade -y
-RUN apt install git curl python3-pip ffmpeg -y
-
-# Updating Pip Packages
-RUN pip3 install -U pip
-
-# Copying Requirements
-COPY requirements.txt /requirements.txt
-
-# Installing Requirements
-RUN cd /
-RUN pip3 install -U -r requirements.txt
-RUN mkdir /MissPerfectURL
-WORKDIR /MissPerfectURL
-
-# Running MessageSearchBot
-CMD ["python", "bot.py"]
+COPY . .
+RUN pip3 install -r requirements.txt
+CMD ["bash", "run.sh"]
